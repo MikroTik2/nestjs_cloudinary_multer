@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
+import { Readable } from "stream";
 import { v2 as cloudinary, UploadApiErrorResponse, UploadApiResponse } from "cloudinary";
-import toStream from 'buffer-to-stream';
 
 @Injectable()
 export class CloudinaryService {
@@ -14,7 +14,11 @@ export class CloudinaryService {
                     resolve(result);
                 });
 
-                toStream(file.buffer).pipe(upload);
+                const stream = new Readable();
+                stream.push(file.buffer);
+                stream.push(null);
+
+                stream.pipe(upload);
             });
         } catch (error) {
             throw new BadRequestException(`Failed to upload file from cloudinary: ${error.message}`);
@@ -31,6 +35,7 @@ export class CloudinaryService {
     }
 
     public async destroy(public_id: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
+        console.log(public_id)
         try {
             return await cloudinary.uploader.destroy(public_id);
         } catch (error) {

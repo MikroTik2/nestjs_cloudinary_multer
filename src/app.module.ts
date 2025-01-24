@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { AppController } from "@/app.controller";
 import { CloudinaryModule } from "@/cloudinary";
 import { ConfigModule } from "@nestjs/config";
 
@@ -9,5 +10,6 @@ import { ConfigModule } from "@nestjs/config";
             isGlobal: true,
         }),
     ],
+    controllers: [AppController],
 })
 export class AppModule {}
