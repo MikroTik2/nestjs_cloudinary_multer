@@ -1,7 +1,8 @@
-import { Controller, Param, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Controller, Param, Post, UploadedFile, UseInterceptors, UsePipes } from "@nestjs/common";
 import { ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CloudinaryService } from "@/cloudinary/services";
+import { FileSizeValidationPipe } from "@/core/";
 
 @ApiTags("Files")
 @Controller("/files")
@@ -13,7 +14,7 @@ export class AppController {
     @ApiOperation({ summary: "Upload a file" })
     @ApiConsumes("multipart/form-data")
     @ApiResponse({ status: 201, description: "File successfully uploaded." })
-    @ApiResponse({ status: 400, description: "Bad Request." })
+    @ApiResponse({ status: 400, description: 'Bad Request. File size exceeds the 10 MB limit.' })
     @ApiBody({
         schema: {
             type: "object",
@@ -25,6 +26,7 @@ export class AppController {
             },
         },
     })
+    @UsePipes(FileSizeValidationPipe)
     async uploadFile(@UploadedFile() file: Express.Multer.File) {
         return await this.cloudinary.upload(file);
     }
@@ -35,7 +37,7 @@ export class AppController {
     @ApiConsumes("multipart/form-data")
     @ApiParam({ name: 'public_id' })
     @ApiResponse({ status: 201, description: "File successfully update." })
-    @ApiResponse({ status: 400, description: "Bad Request." })
+    @ApiResponse({ status: 400, description: 'Bad Request. File size exceeds the 10 MB limit.' })
     @ApiBody({
         schema: {
             type: "object",
@@ -47,6 +49,7 @@ export class AppController {
             },
         },
     })
+    @UsePipes(FileSizeValidationPipe)
     async updateFile(@UploadedFile() file: Express.Multer.File, @Param('public_id') public_id: string) {
         return await this.cloudinary.update(file, public_id);
     }

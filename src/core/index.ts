@@ -1,0 +1,1 @@
+export { FileSizeValidationPipe } from './file-size.pipe';

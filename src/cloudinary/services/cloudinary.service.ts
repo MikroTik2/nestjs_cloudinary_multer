@@ -35,7 +35,6 @@ export class CloudinaryService {
     }
 
     public async destroy(public_id: string): Promise<UploadApiResponse | UploadApiErrorResponse> {
-        console.log(public_id)
         try {
             return await cloudinary.uploader.destroy(public_id);
         } catch (error) {
